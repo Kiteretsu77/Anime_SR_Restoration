@@ -12,30 +12,27 @@ root_path = os.path.abspath('.')
 sys.path.append(root_path)
 from opt import opt
 from model.weight_utils import check_weight_path
-from model.RealCuGAN.cunet import UNet_Full
+from model.VCISR.RRDB import RRDBNet
 
 
 
-class RealCuGAN_upscaler(object):
+class VCISR_upscaler(object):
     
-    def __init__(self, scale, weight_path = "pretrained/2x_RealCuGAN.pth"):
+    def __init__(self, scale, weight_path = "pretrained/2x_VCISR_RRDB.pth"):
         
         # Load the model here
-        self.model = UNet_Full(scale)
+        self.model = RRDBNet(3, 3, scale)
         
         # Read and Clean the weight
-        check_weight_path(weight_path, "Real-CuGAN")
+        check_weight_path(weight_path, "VCISR")
         checkpoint_g = torch.load(weight_path)
-        if "pro" in checkpoint_g:
-            # We need to delete "pro" part in cunet (Real-CUGAN)
-            del checkpoint_g["pro"]
         
         # Load the weight
-        self.model.load_state_dict(checkpoint_g)
+        self.model.load_state_dict(checkpoint_g['model_state_dict'])
         self.model = self.model.eval().cuda()
         
         # Other setting
-        self.model_name = "Real-CuGAN"
+        self.model_name = "VCISR"
     
     
 

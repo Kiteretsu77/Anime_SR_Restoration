@@ -23,7 +23,7 @@ def check_weight_path(weight_path, model_name):
     if model_name not in weight_path_url:
         raise NotImplementedError("We don't have record for the pretrained weight of "+model_name+" now.")
     
-    
+    print("Downloading ...")
     url = weight_path_url[model_name]
     r = requests.get(url, allow_redirects=True)
     open(weight_path, 'wb').write(r.content)

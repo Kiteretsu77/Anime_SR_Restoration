@@ -7,6 +7,7 @@ sys.path.append(root_path)
 from opt import opt
 from model.RealESRGAN.upscaler import RealESRGAN_upscaler
 from model.RealCuGAN.upscaler import RealCuGAN_upscaler
+from model.VCISR.upscaler import VCISR_upscaler
 
 supported_img_extension = ['jpg', 'png']
 supported_video_extension = ['mp4']
@@ -21,10 +22,16 @@ def load_model(model_name, scale):
     Returns:
         SR_instance (obj):      The instance of the class we obtain
     '''
+    
     if model_name == "Real-ESRGAN":
         return RealESRGAN_upscaler(scale)
+    
     elif model_name == "Real-CuGAN":
         return RealCuGAN_upscaler(scale)
+    
+    elif model_name == "VCISR":
+        return VCISR_upscaler(scale)
+    
     else:
         raise NotImplementedError("We don't support such model now")
 

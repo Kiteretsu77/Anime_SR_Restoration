@@ -172,7 +172,7 @@ def main():
     from opt import opt                 # Manage GPU to choose
     import time
     
-    model = UNet_Full().cuda()
+    model = UNet_Full(scale=2).cuda()
     pytorch_total_params = sum(p.numel() for p in model.parameters())
     print(f"CuNet has param {pytorch_total_params//1000} K params")
 
