@@ -2,7 +2,7 @@ import os, shutil, cv2, requests
 
 
 weight_path_url = {
-    "Real-CUGAN" : "https://drive.google.com/u/0/uc?id=1hc1Xh_1qBkU4iGzWxkThpUa5_W9t7GZ_&export=download",
+    "Real-CuGAN" : "https://drive.google.com/u/0/uc?id=1hc1Xh_1qBkU4iGzWxkThpUa5_W9t7GZ_&export=download",
     "Real-ESRGAN" : "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.2.4/RealESRGAN_x4plus_anime_6B.pth",
     "VCISR": "https://drive.google.com/u/0/uc?id=1y59iJ86xujt3990tzyyBAq73VcPKJ3ri&export=download",
 }

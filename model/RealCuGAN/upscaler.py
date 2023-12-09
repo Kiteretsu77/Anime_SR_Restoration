@@ -12,25 +12,30 @@ root_path = os.path.abspath('.')
 sys.path.append(root_path)
 from opt import opt
 from model.weight_utils import check_weight_path
-from model.RealESRGAN.RRDB import RRDBNet
+from model.RealCuGAN.cunet import UNet_Full
 
 
 
-class RealESRGAN_upscaler(object):
+class RealCuGAN_upscaler(object):
     
-    def __init__(self, scale, weight_path = "pretrained/4x_RealESRGAN.pth"):
+    def __init__(self, scale, weight_path = "pretrained/4x_RealCuGAN.pth"):
         
         # Load the model here
-        self.model = RRDBNet(3, 3, scale)
+        self.model = UNet_Full(scale)
         
-        # Load weight
-        check_weight_path(weight_path, "Real-ESRGAN")
+        # Read and Clean the weight
+        check_weight_path(weight_path, "Real-CuGAN")
         checkpoint_g = torch.load(weight_path)
-        self.model.load_state_dict(checkpoint_g['params_ema'])
+        if "pro" in checkpoint_g:
+            # We need to delete "pro" part in cunet (Real-CUGAN)
+            del checkpoint_g["pro"]
+        
+        # Load the weight
+        self.model.load_state_dict(checkpoint_g)
         self.model = self.model.eval().cuda()
         
         # Other setting
-        self.model_name = "Real-ESRGAN"
+        self.model_name = "Real-CuGAN"
     
     
 
