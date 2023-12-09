@@ -1,7 +1,9 @@
 # Anime_SR_Restoration
 
-This repository is a collection of existing Anime Super-Resolution and Restoration model for the convenience of researcher and engineers who wants to restore anime images.
+This repository is a collection of existing Anime Super-Resolution and Restoration models for the convenience of researchers and engineers who want to restore anime images.\
+This repo is continuously developing! Feel free to leave your suggestions!\
 :star: If you like Anime_SR_Restoration, please help star this repo. Thanks! :hugs:
+
 
 
 ## :book:Table Of Contents
