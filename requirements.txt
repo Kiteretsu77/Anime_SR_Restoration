@@ -1,0 +1,9 @@
+# Relatively static library (These libraries are comparatively stable, so the version here can be versatile, we attached the version we used in the experiments)
+numpy==1.26.0
+opencv-python==4.8.1.78
+pillow==10.0.1
+moviepy
+
+
+# Relatively dynamic library (We think that these libraries may frequenctly modify their API, so it is better to use the same version as belong)
+pyiqa==0.1.7

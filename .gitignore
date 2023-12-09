@@ -1,0 +1,22 @@
+# Hidden files
+.ipynb_checkpoints
+.idea
+__pycache__
+
+# Folders
+tmp/*
+
+# Generic
+*.pyc
+*.pth
+*.png
+*.jpg
+*.mp4
+*.txt
+*.json
+*.zip
+*.mp4
+*.csv
+
+# Should be included files
+!requirements.txt
