@@ -39,16 +39,21 @@ class RealCuGAN_upscaler(object):
     
     
 
-    def __call__(self, input_path, store_path):
+    def __call__(self, input, store_path=None):
         ''' Super-Resolve the image with input_path
         Args:
-            input_path (str):   The input path 
-            store_path (str):   The store path
+            input_path (str/numpy):     The input path or numpy
+            store_path (str):           The store path (default: None) [If this is None, we will return the super-resolved result back]
+        Returns:
+            gen_hr (numpy):     The generated HR image in numpy form
         '''
         
         # Read image and Transform
-        img_lr = cv2.imread(input_path)
-        img_lr = cv2.cvtColor(img_lr, cv2.COLOR_BGR2RGB)
+        if type(input) is str:
+            img_lr = cv2.imread(input)
+            img_lr = cv2.cvtColor(img_lr, cv2.COLOR_BGR2RGB)
+        else:
+            img_lr = input
         img_lr = ToTensor()(img_lr).unsqueeze(0).cuda()     # Use tensor format
         
         
@@ -57,7 +62,10 @@ class RealCuGAN_upscaler(object):
         
         
         # Store the generated image
-        save_image(gen_hr, store_path) 
+        if store_path is not None:
+            save_image(gen_hr, store_path) 
+        else:
+            return np.uint8(np.transpose( torch.clamp(255.0*gen_hr.squeeze(), 0, 255).cpu().detach().numpy(), (1, 2, 0)))
         
         # Empty the cache every time you finish processing one image
-        torch.cuda.empty_cache() 
+        # torch.cuda.empty_cache() 

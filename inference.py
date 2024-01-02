@@ -1,5 +1,10 @@
-import sys, os, cv2
+import sys, os, cv2, shutil
+from tqdm import tqdm
+from moviepy.video.io.ffmpeg_writer import FFMPEG_VideoWriter
+from moviepy.editor import VideoFileClip
 import torch
+
+
 
 # Import files from the local folder
 root_path = os.path.abspath('.')
@@ -58,14 +63,65 @@ def process_img(SR_instance, input_path, store_path):
     
 
 
-def process_video():
+def process_video(SR_instance, input_path, store_path, rescale_factor=1):
     ''' Super-Resolve single video file
     Args:
         SR_instance (object):       The instance object for the Super Resolution Class
-        input_path (str):           The input path
+        input_path (str):           The input path to video file
         store_path (str):           The store path
+        rescale_factor (int):       This is used for the case of rescale if this is set
     '''
-    return
+    # Default setting
+    encode_params = ['-crf', '23', '-preset', 'medium', '-tune', 'animation'] 
+    
+    # Read the video path
+    objVideoReader = VideoFileClip(filename=input_path)
+    scale = opt['scale']
+    
+    # Obtain basic video information
+    width, height = objVideoReader.reader.size
+    original_fps = objVideoReader.reader.fps
+    nframes = objVideoReader.reader.nframes
+    has_audio = objVideoReader.audio
+    
+    # Create a tmp file
+    if os.path.exists("tmp"):
+        shutil.rmtree("tmp")
+    os.makedirs("tmp")
+    if os.path.exists(store_path):
+        os.remove(store_path)
+    
+    
+    # Create a video writer
+    output_size = (width * scale * rescale_factor, height * scale * rescale_factor)
+    if has_audio:
+        objVideoReader.audio.write_audiofile("tmp/output_audio.mp3")    # Hopefully, mp3 format is supported for all input video 
+        writer = FFMPEG_VideoWriter(store_path, output_size, original_fps, ffmpeg_params=encode_params, audiofile="tmp/output_audio.mp3")
+    else:
+        writer = FFMPEG_VideoWriter(store_path, output_size, original_fps, ffmpeg_params=encode_params)
+    
+    
+    # Setup Progress bar
+    progress_bar = tqdm(range(0, nframes), initial=0, desc="Frame",)
+    
+    
+    # Iterate frames from the video and super-resolve individually
+    for idx, frame in enumerate(objVideoReader.iter_frames(fps=original_fps)):
+        
+        # Rescale the video frame at the beginning if we want a different output resolution
+        if rescale_factor != 1:
+            frame = cv2.resize(frame, (int(width*rescale_factor), int(height*rescale_factor))) # interpolation=cv2.INTER_LANCZOS4
+        
+        # Inference
+        img_SR = SR_instance(frame)
+        
+        # Write into the frame
+        writer.write_frame(img_SR)
+        
+        progress_bar.update(1)
+
+    writer.close()
+        
 
 
 
@@ -97,7 +153,7 @@ if __name__ == "__main__":
             # Check if the output format is correct
             if output_extension not in supported_video_extension:
                 raise ValueError('The output format does not match the input format.')
-
+            process_video(SR_instance, input_path, store_path)
         else:
             raise NotImplementedError("This single image input format is not what we support!")
     
