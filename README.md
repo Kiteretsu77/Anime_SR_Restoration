@@ -47,7 +47,7 @@ pip install -r requirements.txt
 1. Setup opt.py for the input and output path
 2. Execute the following:
     ```shell
-    python inferece.py
+    python inference.py
     ```
 
 

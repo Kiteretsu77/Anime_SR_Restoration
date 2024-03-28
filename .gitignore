@@ -17,6 +17,8 @@ tmp/*
 *.zip
 *.mp4
 *.csv
+*.jpeg
+*.webp
 
 # Should be included files
 !requirements.txt
