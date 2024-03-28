@@ -4,8 +4,8 @@ import os
 opt = {}
 
 # File Setting
-opt['input_path'] = "pokemon_short.mp4"      # The path to the input folder/images (can detect automatically)
-opt['store_path'] = "result/pokemon_short.mp4"     # The path to stored the super-resolved images/videos
+opt['input_path'] = "mass_test"      # The path to the input folder/images (can detect automatically)
+opt['store_path'] = "results/"     # The path to stored the super-resolved images/videos
 opt['model_name'] = "VCISR"           # Model name:  Bicubic | Real-CuGAN | Real-ESRGAN | VCISR        TODO: Bicubic is not yet Implemented
 opt['scale'] = 2            # The scaling factor needed   (Supported scale factor to each model: )
 

@@ -51,9 +51,17 @@ class VCISR_upscaler(object):
             img_lr = cv2.cvtColor(img_lr, cv2.COLOR_BGR2RGB)
         else:
             img_lr = input
+        
+        # Automatically do 4x crop
+        h, w, _ = img_lr.shape
+        if h % 4 != 0:
+            img_lr = img_lr[:4*(h//4),:,:]
+        if w % 4 != 0:
+            img_lr = img_lr[:,:4*(w//4),:]
+
+        # Tensor Transform
         img_lr = ToTensor()(img_lr).unsqueeze(0).cuda()     # Use tensor format
-        
-        
+
         # Inference
         gen_hr = self.model(img_lr)
         

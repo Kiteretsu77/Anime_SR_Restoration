@@ -49,6 +49,14 @@ class RealESRGAN_upscaler(object):
             img_lr = cv2.cvtColor(img_lr, cv2.COLOR_BGR2RGB)
         else:
             img_lr = input
+
+        # Automatically do 4x crop
+        h, w, _ = img_lr.shape
+        if h % 4 != 0:
+            img_lr = img_lr[:4*(h//4),:,:]
+        if w % 4 != 0:
+            img_lr = img_lr[:,:4*(w//4),:]
+
         img_lr = ToTensor()(img_lr).unsqueeze(0).cuda()     # Use tensor format
         
         
@@ -63,4 +71,4 @@ class RealESRGAN_upscaler(object):
             return np.uint8(np.transpose( torch.clamp(255.0*gen_hr.squeeze(), 0, 255).cpu().detach().numpy(), (1, 2, 0)))
         
         # Empty the cache every time you finish processing one image
-        # torch.cuda.empty_cache() 
+        torch.cuda.empty_cache() 

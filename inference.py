@@ -14,8 +14,8 @@ from model.RealESRGAN.upscaler import RealESRGAN_upscaler
 from model.RealCuGAN.upscaler import RealCuGAN_upscaler
 from model.VCISR.upscaler import VCISR_upscaler
 
-supported_img_extension = ['jpg', 'png']
-supported_video_extension = ['mp4']
+supported_img_extension = ['jpg', 'png', 'webp', 'jpeg']
+supported_video_extension = ['mp4', 'mkv']
 
 
 
@@ -41,7 +41,7 @@ def load_model(model_name, scale):
         raise NotImplementedError("We don't support such model now")
 
 
-
+@torch.no_grad
 def process_img(SR_instance, input_path, store_path):
     ''' Super-Resolve single image file
     Args:
@@ -154,12 +154,35 @@ if __name__ == "__main__":
             if output_extension not in supported_video_extension:
                 raise ValueError('The output format does not match the input format.')
             process_video(SR_instance, input_path, store_path)
+
         else:
             raise NotImplementedError("This single image input format is not what we support!")
     
-    else: # If the input path is a folder
-        # Check if the output format is correct
+    else: # If the input path is a folder of images/videos
         print("We will recursively read and process all files in this folder")
+
+        # Prepare store folder if needed
+        if os.path.exists(store_path):  # This is usually a folder
+            shutil.rmtree(store_path)
+        os.makedirs(store_path)
+        
+        for file_name in sorted(os.listdir(input_path)):
+            
+            # Check if the output format is correct
+            input_extension = file_name.split('.')[-1]
+            img_path = os.path.join(input_path, file_name)
+            print("We are processing ", img_path)
+
+            exact_store_path = os.path.join(store_path, "".join(file_name.split('.')[:-1]) + ".png")
+
+            if input_extension in supported_img_extension: # If the input path is single image
+                process_img(SR_instance, img_path, exact_store_path)
+            
+            elif input_extension in supported_video_extension: # If the input path is single video
+                process_video(SR_instance, img_path, exact_store_path)
+
+            else:
+                raise NotImplementedError("This single image input format is not what we support!")
 
     
     print("Finish processing all input files!")
